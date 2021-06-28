@@ -138,4 +138,5 @@ while True:
                     message += '\n'
                     message += string
         print(message, end='\r')
+    
     sleep(5)
