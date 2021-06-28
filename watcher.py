@@ -96,26 +96,29 @@ organisation_id = strings[1]
 key = strings[2]
 secret = strings[3]
 
+api = private_api(host, organisation_id, key, secret)
+
 while True:
-    api = private_api(host, organisation_id, key, secret)
+
+    message = "\n\n"
 
     # get account data, fetch BTC state
     try:
         account_data = api.get_accounts_for_currency('BTC')
     except:
-        print('Account data not available')
+        message += 'Account data not available'
     else:
-        print('Balance: {balance:.5f} mBTC'.format(balance = float(account_data['totalBalance']) * 1000))
+        message += 'Balance: {balance:.5f} mBTC'.format(balance = float(account_data['totalBalance']) * 1000)
     
     # get rigs data
     try:
         rigs_data = api.get_my_rigs()
     except:
-        print ('Rigs data not available.')
+        message += '\nRigs data not available.'
     else:
     
         # fetch total unpaid BTC data for rigs
-        print("Unpaid amount on rigs: {amount:.5f} mBTC".format(amount = float(rigs_data['unpaidAmount']) * 1000))
+        message += "\nUnpaid amount on rigs: {amount:.5f} mBTC".format(amount = float(rigs_data['unpaidAmount']) * 1000)
 
         # print rig GPUs stats
         for rig in rigs_data['miningRigs']:
@@ -132,6 +135,7 @@ while True:
                             .format(name = rig['name'], gputemp = GPU_temp, vramtemp = VRAM_temp, fanpercent = fan_percent, hashrate = hash_rate)
                     else:
                         string = '{name: <8}  inactive'.format(name = rig['name'])
-                    print(string)
+                    message += '\n'
+                    message += string
+        print(message, end='\r')
     sleep(5)
-    print()
