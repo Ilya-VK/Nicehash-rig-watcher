@@ -6,10 +6,11 @@ import hmac
 import requests
 import json
 from hashlib import sha256
+from configparser import ConfigParser
 
 class private_api: #stripped from original Nicehash example to only needed parts
 
-    def __init__(self, host, organisation_id, key, secret, verbose=False):
+    def __init__(self, host, organisation_id, key, secret, verbose = False):
         self.key = key
         self.secret = secret
         self.organisation_id = organisation_id
@@ -84,16 +85,16 @@ class private_api: #stripped from original Nicehash example to only needed parts
     def get_my_rigs(self): # added for rig functionality
         return self.request('GET','/main/api/v2/mining/rigs2/', '', None)
 
-    def get_accounts_for_currency(self, currency):
+    def get_accounts_for_currency(self, currency: str):
         return self.request('GET', '/main/api/v2/accounting/account2/' + currency, '', None)
 
-config = open('api.config', 'r')
-strings = config.read().split('\n')
+config = ConfigParser()
+config.read('config.ini')
 
-host = strings[0]
-organisation_id = strings[1]
-key = strings[2]
-secret = strings[3]
+host = config.get('main', 'host')
+organisation_id = config.get('main', 'organisation_id')
+key = config.get('main', 'key')
+secret = config.get('main', 'secret')
 
 api = private_api(host, organisation_id, key, secret)
 

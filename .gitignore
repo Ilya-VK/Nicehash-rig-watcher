@@ -1,6 +1,4 @@
 __pycache__/
 example.json
 nicehash.py
-api.config
-api.config.yng
-api.config.my
+config.ini
