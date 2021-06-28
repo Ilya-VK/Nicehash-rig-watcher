@@ -1,7 +1,5 @@
-# Минималистичный монитор состояния GPU в ригах для Nicehash API
-## Требования
-Требуется установленный Python и requests.
-## Настройка
-Данные API читаются из файла api.config.
-
-Взять api.config.example, заполнить, переименовать в api.config, запустить watcher.py.
+# Minimalistic console GPU monitor for Nicehash API
+## Requirements
+Python and requests package.
+## Configuration
+Fill API credentials into api.config.example, rename the file to api.config, run watcher.py.
