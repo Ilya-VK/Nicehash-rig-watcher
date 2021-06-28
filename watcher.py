@@ -121,19 +121,23 @@ while True:
                     message += ' | CPU:'
                     if device_status == "DISABLED":
                         message += ' not mining'
+                    elif device_status == 'OFFLINE':
+                        message += ' offline   '
                     else:
                         message += ' mining    '
                 else:
-                    message += ' | GPU:'
+                    message += (' | GPU: {devicename: <21}').format(devicename = device_name)
                     if device_status == 'MINING':
                         # VRAM/HotSpot: temperature / 65536, GPU Temp: temperature % 65536 # Hello, Nicehash, why not just simply add field to API output?..
                         GPU_temp = device['temperature'] % 65536
                         VRAM_temp = device['temperature'] / 65536
                         fan_percent = device['revolutionsPerMinutePercentage'] / 100.0
                         hash_rate = float(device['speeds'][0]['speed'])
-                        message += ' {devicename: <20} GPUtemp:{gputemp: >3.0f}°С VRAMtemp:{vramtemp: >3.0f}°С Fan:{fanpercent: >4.0%}  Hashrate:{hashrate: >6.2f}MH/s'\
-                            .format(devicename = device_name, gputemp = GPU_temp, vramtemp = VRAM_temp, fanpercent = fan_percent, hashrate = hash_rate)
+                        message += ' GPU:{gputemp: >3.0f}°С VRAM:{vramtemp: >3.0f}°С Fan:{fanpercent: >4.0%} Hashrate {hashrate: >6.2f}MH/s'\
+                            .format(gputemp = GPU_temp, vramtemp = VRAM_temp, fanpercent = fan_percent, hashrate = hash_rate)
+                    elif device_status == 'OFFLINE':
+                        message += ' offline'
                     else:
-                        message += '{name: <8}  inactive'.format(name = device_name)
+                        message += ' inactive'
         print(message, end='\r')
     sleep(5)
