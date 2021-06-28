@@ -7,6 +7,8 @@ Python and python `requests` package.
    * Wallet Permissions / View balances, wallet activities and deposit addresses
    * Mining Permissions / View mining data and statistics
 
+**Save API key and secret at the very first time Nicehash show them - you won't be able to see the secret later**
+
 <p align="center">
   <img src="https://github.com/Ilya-VK/Nicehash-rig-watcher/blob/f7490c8d4a836cb722106d11ea55cdfbe7747047/api%20settings.png" alt="API settings image" width="420"/>
 </p>
