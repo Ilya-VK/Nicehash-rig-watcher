@@ -3,9 +3,9 @@ Using Nicehash API.
 ## Requirements
 Python and python `requests` package.
 ## Configuration
-1. Create API key in [Nicehash account settings](https://www.nicehash.com/my/settings/keys) with access to:
+1. **Important**: save API key and secret at the very first time Nicehash show them.<br>Create API key in [Nicehash account settings](https://www.nicehash.com/my/settings/keys) with access to:
    * Wallet Permissions / View balances, wallet activities and deposit addresses
-   * Mining Permissions / View mining data and statistics<br><br>**Important**: save API key and secret at the very first time Nicehash show them.
+   * Mining Permissions / View mining data and statistics
 
 <p align="center">
   <img src="https://github.com/Ilya-VK/Nicehash-rig-watcher/blob/f7490c8d4a836cb722106d11ea55cdfbe7747047/api%20settings.png" alt="API settings image" width="420"/>
