@@ -1,7 +1,7 @@
 # Minimalistic console monitor for Nicehash
 Using Nicehash API.
 ## Requirements
-Python and python `requests` package.
+Python and python `requests` package. Tested only with Python 3.9.5 currently.
 ## Configuration
 1. **Important**: save API key and secret at the very first time Nicehash show them.<br>Create API key in [Nicehash account settings](https://www.nicehash.com/my/settings/keys) with access to:
    * Wallet Permissions / View balances, wallet activities and deposit addresses
