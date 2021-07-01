@@ -1,5 +1,5 @@
 from datetime import datetime
-from time import mktime, sleep, gmtime, strftime
+from time import mktime, sleep, strftime
 import uuid
 import hmac
 import requests
@@ -98,8 +98,8 @@ secret = config.get('main', 'secret')
 api = private_api(host, organisation_id, key, secret)
 
 while True:
-    message = "\n\n"
-    message += strftime("%Y-%m-%d %H:%M:%S", gmtime())
+    now = datetime.now()
+    message =  "\n\n" + now.strftime("%Y-%m-%d %H:%M:%S")
     try:
         account_data = api.get_accounts_for_currency('BTC')
     except:
@@ -112,6 +112,7 @@ while True:
         message += '\nRigs data not available.'
     else:
         message += "Unpaid amount on rigs: {amount:.5f} mBTC.".format(amount = float(rigs_data['unpaidAmount']) * 1000)
+        message += "\n------------------------------------------------------------------------------------------------------------------"
         for rig in rigs_data['miningRigs']:
             message += ('\nRig: {rigname: <10}').format(rigname = rig['name'])
             for device in rig['devices']:
