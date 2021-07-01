@@ -105,13 +105,13 @@ while True:
     except:
         pass
     else:
-        message += ' Balance: {balance:.5f} mBTC. '.format(balance = float(account_data['totalBalance']) * 1000)
+        message += ' Balance: {balance:.5f} mBTC.'.format(balance = float(account_data['totalBalance']) * 1000)
     try:
         rigs_data = api.get_my_rigs()
     except:
         message += '\nRigs data not available.'
     else:
-        message += "Unpaid amount on rigs: {amount:.5f} mBTC.".format(amount = float(rigs_data['unpaidAmount']) * 1000)
+        message += " Unpaid amount on rigs: {amount:.5f} mBTC.".format(amount = float(rigs_data['unpaidAmount']) * 1000)
         message += "\n------------------------------------------------------------------------------------------------------------------"
         for rig in rigs_data['miningRigs']:
             message += ('\nRig: {rigname: <10}').format(rigname = rig['name'])
