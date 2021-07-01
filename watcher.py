@@ -1,6 +1,5 @@
 from datetime import datetime
-from time import mktime
-from time import sleep
+from time import mktime, sleep, gmtime, strftime
 import uuid
 import hmac
 import requests
@@ -100,12 +99,13 @@ api = private_api(host, organisation_id, key, secret)
 
 while True:
     message = "\n\n"
+    message += strftime("%Y-%m-%d %H:%M:%S", gmtime())
     try:
         account_data = api.get_accounts_for_currency('BTC')
     except:
         pass
     else:
-        message += 'Balance: {balance:.5f} mBTC. '.format(balance = float(account_data['totalBalance']) * 1000)
+        message += ' Balance: {balance:.5f} mBTC. '.format(balance = float(account_data['totalBalance']) * 1000)
     try:
         rigs_data = api.get_my_rigs()
     except:
