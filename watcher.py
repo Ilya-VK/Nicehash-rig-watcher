@@ -112,34 +112,39 @@ while True:
         message += '\nRigs data not available.'
     else:
         message += " Unpaid amount on rigs: {amount:.5f} mBTC.".format(amount = float(rigs_data['unpaidAmount']) * 1000)
-        message += "\n------------------------------------------------------------------------------------------------------------------"
+        message += "\n╔════════════╤═════════════╤══════════════════════╤═══════╤═════════╤═══════╤════════════╗"
+        message += "\n║  Rig name  │     CPU     │         GPU          │  GPU  │ Hotspot │  Fan  │  Hashrate  ║"
+        message += "\n╠════════════╪═════════════╪══════════════════════╪═══════╪═════════╪═══════╪════════════╣"
+                    # | IVKhome2   | not mining | GeForce GTX 1060 6GB |  45°С |    58°С |   30% |  58.28MH/s |
         for rig in rigs_data['miningRigs']:
-            message += ('\nRig: {rigname: <10}').format(rigname = rig['name'])
+            message += ('\n║ {rigname: <10}').format(rigname = rig['name'])
             for device in rig['devices']:
                 device_name = device['name']
                 device_type = device['deviceType']['enumName']
                 device_status = device['status']['enumName']
                 if device_type == 'CPU':
-                    message += ' | CPU:'
+                    message += ' │ '
                     if device_status == "DISABLED":
-                        message += ' not mining'
+                        message += 'not mining '
                     elif device_status == 'OFFLINE':
-                        message += ' offline   '
+                        message += 'offline    '
                     else:
-                        message += ' mining    '
+                        message += 'mining     '
                 else:
-                    message += (' | {devicename: <21}').format(devicename = device_name)
+                    message += (' │ {devicename: <20}').format(devicename = device_name)
                     if device_status == 'MINING':
-                        # VRAM/HotSpot: temperature / 65536, GPU Temp: temperature % 65536 # Hello, Nicehash, why not just simply add field to API output?..
+                        # Hotspot: temperature / 65536, GPU Temp: temperature % 65536
+                        # Hello, Nicehash, why not just simply add field to API output?.. Where's VRAM temp additionaly?
                         GPU_temp = device['temperature'] % 65536
-                        VRAM_temp = device['temperature'] / 65536
+                        Hotspot_temp = device['temperature'] / 65536
                         fan_percent = device['revolutionsPerMinutePercentage'] / 100.0
                         hash_rate = float(device['speeds'][0]['speed'])
-                        message += ' GPU:{gputemp: >4.0f}°С VRAM:{vramtemp: >4.0f}°С | Fan:{fanpercent: >5.0%} | Hashrate:{hashrate: >6.2f}MH/s'\
-                            .format(gputemp = GPU_temp, vramtemp = VRAM_temp, fanpercent = fan_percent, hashrate = hash_rate)
+                        message += ' │ {gputemp: >3.0f}°С │ {hotspottemp: >5.0f}°С │ {fanpercent: >5.0%} │ {hashrate: >6.2f}MH/s ║'\
+                            .format(gputemp = GPU_temp, hotspottemp = Hotspot_temp, fanpercent = fan_percent, hashrate = hash_rate)
                     elif device_status == 'OFFLINE':
                         message += ' offline'
                     else:
                         message += ' inactive'
+        message += "\n╚════════════╧═════════════╧══════════════════════╧═══════╧═════════╧═══════╧════════════╝"
         print(message, end='\r')
     sleep(5)
