@@ -142,9 +142,9 @@ while True:
                         message += ' │ {gputemp: >3.0f}°С │ {hotspottemp: >5.0f}°С │ {fanpercent: >5.0%} │ {hashrate: >6.2f}MH/s ║'\
                             .format(gputemp = GPU_temp, hotspottemp = Hotspot_temp, fanpercent = fan_percent, hashrate = hash_rate)
                     elif device_status == 'OFFLINE':
-                        message += ' offline'
+                        message += ' │ offline                              ║'
                     else:
-                        message += ' inactive'
+                        message += ' │ inactive                             ║'
         message += "\n╚════════════╧═════════════╧══════════════════════╧═══════╧═════════╧═══════╧════════════╝"
         print(message, end='\r')
     sleep(5)
