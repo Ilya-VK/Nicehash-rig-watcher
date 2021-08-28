@@ -115,15 +115,17 @@ while True:
         message += "\n╔════════════╤═════════════╤══════════════════════╤═══════╤═════════╤═══════╤════════════╗"
         message += "\n║  Rig name  │     CPU     │         GPU          │  GPU  │ Hotspot │  Fan  │  Hashrate  ║"
         message += "\n╠════════════╪═════════════╪══════════════════════╪═══════╪═════════╪═══════╪════════════╣"
-                    # | IVKhome2   | not mining | GeForce GTX 1060 6GB |  45°С |    58°С |   30% |  58.28MH/s |
+                    # | AAAhome2   | not mining | GeForce GTX 1060 6GB |  45°С |    58°С |   30% |  58.28MH/s |
         for rig in rigs_data['miningRigs']:
             message += ('\n║ {rigname: <10}').format(rigname = rig['name'])
+            firstdevice = True
             for device in rig['devices']:
                 device_name = device['name']
                 device_type = device['deviceType']['enumName']
                 device_status = device['status']['enumName']
-                if device_type == 'CPU':
+                if firstdevice and (device_type == 'CPU'):
                     message += ' │ '
+                    firstdevice = False
                     if device_status == "DISABLED":
                         message += 'not mining '
                     elif device_status == 'OFFLINE':
@@ -131,6 +133,9 @@ while True:
                     else:
                         message += 'mining     '
                 else:
+                    if firstdevice:
+                        message += ' │  not used  '
+                        firstdevice = False
                     message += (' │ {devicename: <20}').format(devicename = device_name)
                     if device_status == 'MINING':
                         # Hotspot: temperature / 65536, GPU Temp: temperature % 65536
