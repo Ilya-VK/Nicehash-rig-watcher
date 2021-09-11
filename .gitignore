@@ -1,4 +1,5 @@
 __pycache__/
+.vscode/
 example.json
 nicehash.py
 config.ini

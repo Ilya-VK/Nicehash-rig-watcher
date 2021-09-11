@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from time import mktime, sleep, strftime
 import uuid
 import hmac
@@ -98,58 +98,46 @@ secret = config.get('main', 'secret')
 api = private_api(host, organisation_id, key, secret)
 
 while True:
-    now = datetime.now()
-    message =  "\n\n" + now.strftime("%Y-%m-%d %H:%M:%S")
+    messages = []
+    messages.append(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
     try:
         account_data = api.get_accounts_for_currency('BTC')
     except:
         pass
     else:
-        message += ' Balance: {balance:.5f} mBTC.'.format(balance = float(account_data['totalBalance']) * 1000)
+        messages.append(f"Account balance: {float(account_data['totalBalance']) * 1000:>13.5f} mBTC")
+
     try:
         rigs_data = api.get_my_rigs()
     except:
-        message += '\nRigs data not available.'
+        messages.append('Rigs data not available.')
     else:
-        message += " Unpaid amount on rigs: {amount:.5f} mBTC.".format(amount = float(rigs_data['unpaidAmount']) * 1000)
-        message += "\n╔════════════╤═════════════╤══════════════════════╤═══════╤═════════╤═══════╤════════════╗"
-        message += "\n║  Rig name  │     CPU     │         GPU          │  GPU  │ Hotspot │  Fan  │  Hashrate  ║"
-        message += "\n╠════════════╪═════════════╪══════════════════════╪═══════╪═════════╪═══════╪════════════╣"
-                    # | AAAhome2   | not mining | GeForce GTX 1060 6GB |  45°С |    58°С |   30% |  58.28MH/s |
+        messages.append(f"Unpaid amount on rigs: {float(rigs_data['unpaidAmount']) * 1000:.5f} mBTC")
         for rig in rigs_data['miningRigs']:
-            message += ('\n║ {rigname: <10}').format(rigname = rig['name'])
-            firstdevice = True
+            messages.append('')
             for device in rig['devices']:
-                device_name = device['name']
-                device_type = device['deviceType']['enumName']
-                device_status = device['status']['enumName']
-                if firstdevice and (device_type == 'CPU'):
-                    message += ' │ '
-                    firstdevice = False
-                    if device_status == "DISABLED":
-                        message += 'not mining '
-                    elif device_status == 'OFFLINE':
-                        message += 'offline    '
-                    else:
-                        message += 'mining     '
-                else:
-                    if firstdevice:
-                        message += ' │  not used  '
-                        firstdevice = False
-                    message += (' │ {devicename: <20}').format(devicename = device_name)
-                    if device_status == 'MINING':
-                        # Hotspot: temperature / 65536, GPU Temp: temperature % 65536
-                        # Hello, Nicehash, why not just simply add field to API output?.. Where's VRAM temp additionaly?
-                        GPU_temp = device['temperature'] % 65536
-                        Hotspot_temp = device['temperature'] / 65536
-                        fan_percent = device['revolutionsPerMinutePercentage'] / 100.0
-                        hash_rate = float(device['speeds'][0]['speed'])
-                        message += ' │ {gputemp: >3.0f}°С │ {hotspottemp: >5.0f}°С │ {fanpercent: >5.0%} │ {hashrate: >6.2f}MH/s ║'\
-                            .format(gputemp = GPU_temp, hotspottemp = Hotspot_temp, fanpercent = fan_percent, hashrate = hash_rate)
-                    elif device_status == 'OFFLINE':
-                        message += ' │ offline                              ║'
-                    else:
-                        message += ' │ inactive                             ║'
-        message += "\n╚════════════╧═════════════╧══════════════════════╧═══════╧═════════╧═══════╧════════════╝"
-        print(message, end='\r')
+                row = []
+                row.append(f"{rig['name']:<5}")
+                if type(messages[-1]) is list:
+                    if messages[-1][0] == row[-1]:
+                        row[-1] = '     '
+                device['name'] = device['name'].replace('Intel(R) Core(TM) ', '')
+                row.append(f"{device['name']:<23}")
+                row.append(f"{device['status']['enumName']:<8}")
+                for speed in device['speeds']:
+                    row.append(f"{speed['title']:<15} {float(speed['speed']):>6.2f}{speed['displaySuffix']}/s")
+                    if device['revolutionsPerMinutePercentage'] > 0:
+                        row.append(f"Fan: {device['revolutionsPerMinutePercentage']/100.0:>3.0%}")
+                    if device['temperature'] > 0:
+                        row.append(f"GPU:{device['temperature'] % 65536:>3.0f}°С")
+                        row.append(f"HS/VRAM:{device['temperature'] / 65536:>3.0f}°С")
+                messages.append(row)
+
+    for item in messages:
+        if type(item) is str:
+            print(item)
+        elif type(item) is list:
+            print(*item, sep=' ')
+    print()
     sleep(5)
