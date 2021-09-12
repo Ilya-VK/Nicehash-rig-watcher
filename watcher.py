@@ -4,6 +4,7 @@ import uuid
 import hmac
 import requests
 import json
+import re
 from hashlib import sha256
 from configparser import ConfigParser
 
@@ -111,7 +112,7 @@ while True:
     try:
         rigs_data = api.get_my_rigs()
     except:
-        messages.append('Rigs data not available.')
+        messages.append('Rigs data not available')
     else:
         messages.append(f"Unpaid amount on rigs: {float(rigs_data['unpaidAmount']) * 1000:.5f} mBTC")
         for rig in rigs_data['miningRigs']:
@@ -123,15 +124,19 @@ while True:
                     if messages[-1][0] == row[-1]:
                         row[-1] = '     '
                 device['name'] = device['name'].replace('Intel(R) Core(TM) ', '')
-                row.append(f"{device['name']:<23}")
-                row.append(f"{device['status']['enumName']:<8}")
+                device['name'] = device['name'].replace(' CPU @ ', '')
+                device['name'] = device['name'].replace('GeForce ', '')
+                device['name'] = device['name'].replace('Quadro ', '')
+                device['name'] = re.sub(r"\d[.]\d\d(GHz)", '', device['name'])
+                row.append(f"{device['name']:<13}")
+                row.append(f"{device['status']['enumName']:<10}")
                 for speed in device['speeds']:
-                    row.append(f"{speed['title']:<15} {float(speed['speed']):>6.2f}{speed['displaySuffix']}/s")
+                    row.append(f"  {speed['title']:<14} {float(speed['speed']):>6.2f}{speed['displaySuffix']}/s")
                     if device['revolutionsPerMinutePercentage'] > 0:
-                        row.append(f"Fan: {device['revolutionsPerMinutePercentage']/100.0:>3.0%}")
+                        row.append(f"   Fan: {device['revolutionsPerMinutePercentage']/100.0:>3.0%}")
                     if device['temperature'] > 0:
-                        row.append(f"GPU:{device['temperature'] % 65536:>3.0f}°С")
-                        row.append(f"HS/VRAM:{device['temperature'] / 65536:>3.0f}°С")
+                        row.append(f"   GPU:{device['temperature'] % 65536:>3.0f}°С")
+                        row.append(f"   HS/VRAM:{device['temperature'] / 65536:>3.0f}°С")
                 messages.append(row)
 
     for item in messages:
