@@ -119,30 +119,29 @@ while True:
             messages.append('')
             for device in rig['devices']:
                 row = []
-                row.append(f"{rig['name']:<5}")
+                row.append(f"{rig['name']:<4}")
                 if type(messages[-1]) is list:
                     if messages[-1][0] == row[-1]:
-                        row[-1] = '     '
+                        row[-1] = '    '
                 device['name'] = device['name'].replace('Intel(R) Core(TM) ', '')
-                device['name'] = device['name'].replace(' CPU @ ', '')
                 device['name'] = device['name'].replace('GeForce ', '')
                 device['name'] = device['name'].replace('Quadro ', '')
-                device['name'] = re.sub(r"\d[.]\d\d(GHz)", '', device['name'])
-                row.append(f"{device['name']:<13}")
-                row.append(f"{device['status']['enumName']:<10}")
+                device['name'] = re.sub(r"( CPU @ )\d[.]\d\d(GHz)", '', device['name'])
+                row.append(f"{device['name']:<12}")
+                row.append(f"{device['status']['enumName']:<8}")
                 for speed in device['speeds']:
-                    row.append(f"  {speed['title']:<14} {float(speed['speed']):>6.2f}{speed['displaySuffix']}/s")
+                    row.append(f"{speed['title']:<15} {float(speed['speed']):>5.2f}{speed['displaySuffix']}/s")
                     if device['revolutionsPerMinutePercentage'] > 0:
-                        row.append(f"   Fan: {device['revolutionsPerMinutePercentage']/100.0:>3.0%}")
+                        row.append(f"Fan: {device['revolutionsPerMinutePercentage']/100.0:>3.0%}")
                     if device['temperature'] > 0:
-                        row.append(f"   GPU:{device['temperature'] % 65536:>3.0f}°С")
-                        row.append(f"   HS/VRAM:{device['temperature'] / 65536:>3.0f}°С")
+                        row.append(f"GPU:{device['temperature'] % 65536:>3.0f}°С")
+                        row.append(f"HS/VRAM:{device['temperature'] / 65536:>3.0f}°С")
                 messages.append(row)
 
     for item in messages:
         if type(item) is str:
             print(item)
         elif type(item) is list:
-            print(*item, sep=' ')
+            print(*item, sep='   ')
     print()
     sleep(5)
