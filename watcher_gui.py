@@ -173,12 +173,13 @@ def processloop():
                 row.append(f"{device['name']:<12}")
                 row.append(f"{device['status']['enumName']:<8}")
                 for speed in device['speeds']:
-                    row.append(f"{speed['title']:<15} {float(speed['speed']):>5.2f}{speed['displaySuffix']}/s")
-                    if device['revolutionsPerMinutePercentage'] > 0:
-                        row.append(f"Fan: {device['revolutionsPerMinutePercentage']/100.0:>3.0%}")
-                    if device['temperature'] > 0:
-                        row.append(f"GPU:{device['temperature'] % 65536:>3.0f}°С")
-                        row.append(f"HS/VRAM:{device['temperature'] / 65536:>3.0f}°С")
+                    if device['status']['enumName'] != 'OFFLINE':
+                        row.append(f"{speed['title']:<15} {float(speed['speed']):>5.2f}{speed['displaySuffix']}/s")
+                        if device['revolutionsPerMinutePercentage'] > 0:
+                            row.append(f"Fan: {device['revolutionsPerMinutePercentage']/100.0:>3.0%}")
+                        if device['temperature'] > 0:
+                            row.append(f"GPU:{device['temperature'] % 65536:>3.0f}°С")
+                            row.append(f"HS/VRAM:{device['temperature'] / 65536:>3.0f}°С")
                 messages.append(row)
         
         i = 0
